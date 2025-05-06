@@ -12,25 +12,25 @@ const NutritionFacts: React.FC<Props> = ({ nutriments }) => {
     <View style={styles.section}>
       <Text style={styles.subtitle}>Nutrition Facts (per 100g):</Text>
       <View style={styles.nutritionGrid}>
-        {nutriments["energy-kcal_100g"] && (
+        {nutriments["energy-kcal_100g"] != null && (
           <Item
             label="Energy"
             value={`${nutriments["energy-kcal_100g"]} kcal`}
           />
         )}
-        {nutriments.fat_100g && (
+        {nutriments.fat_100g != null && (
           <Item label="Fat" value={`${nutriments.fat_100g}g`} />
         )}
-        {nutriments.carbohydrates_100g && (
+        {nutriments.carbohydrates_100g != null && (
           <Item label="Carbs" value={`${nutriments.carbohydrates_100g}g`} />
         )}
-        {nutriments.proteins_100g && (
+        {nutriments.proteins_100g != null && (
           <Item label="Protein" value={`${nutriments.proteins_100g}g`} />
         )}
-        {nutriments.salt_100g && (
+        {nutriments.salt_100g != null && (
           <Item label="Salt" value={`${nutriments.salt_100g}g`} />
         )}
-        {nutriments.sugars_100g && (
+        {nutriments.sugars_100g != null && (
           <Item label="Sugar" value={`${nutriments.sugars_100g}g`} />
         )}
       </View>

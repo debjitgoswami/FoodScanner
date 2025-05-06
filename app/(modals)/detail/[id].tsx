@@ -4,10 +4,11 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  Button,
   ActivityIndicator,
   Image,
 } from "react-native";
-import { useLocalSearchParams, Stack } from "expo-router";
+import { useLocalSearchParams, Stack, useRouter } from "expo-router";
 import { useFetchFood } from "../../../hooks/useFetchFood";
 import Rating from "../../../components/Rating";
 import HealthyBar from "../../../components/HealthyBar";
@@ -16,6 +17,7 @@ import NutritionFacts from "../../../components/NutritionFacts";
 import KidSafety from "../../../components/KidSafety";
 import { checkKidSafety } from "../../../utils/kidSafety";
 import { Colors } from "../../../constants/Colors";
+
 
 const getNutritionRating = (grade: string): number => {
   const gradeMap: Record<string, number> = {
@@ -29,6 +31,7 @@ const getNutritionRating = (grade: string): number => {
 };
 
 export default function DetailScreen() {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { product, fetchFoodByCode, loading, error } = useFetchFood();
 
@@ -77,6 +80,14 @@ export default function DetailScreen() {
         <Text style={styles.errorSubtext}>
           The product with ID {id} could not be found
         </Text>
+        <Text style={styles.errorSubtext}>
+          Please check the barcode and try again
+        </Text>
+        <Button
+                  title="Scan a barcode"
+                  color={Colors.primary}
+                  onPress={() => router.replace("/scan")} //  navigate to home tab
+                />
       </View>
     );
   }
