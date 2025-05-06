@@ -2,36 +2,62 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Product } from "../types";
 import NutriScore from "./NutriScore";
-import KidSafety from "./KidSafety"; // Assuming this component is correctly imported
+import KidSafety from "./KidSafety";
+import { checkKidSafety } from "../utils/kidSafety";
+
 
 type Props = {
   food: Product;
 };
 
 const FoodCard: React.FC<Props> = ({ food }) => {
-  // Logic to determine if the food is safe for kids (based on ingredients)
-  const isKidSafe = food.ingredients_text
-    ? !food.ingredients_text.toLowerCase().includes("alcohol")
-    : true; // Default to true if no ingredients text is available
+  // More comprehensive check for kid safety
+
+
+  const kidSafetyResult = checkKidSafety(food);
+
 
   return (
     <View style={styles.card}>
       <Image
-        source={{ uri: food.image_url || "./assets/image/icon.png" }}
-        alt={food.product_name || "No Name"}
+        source={{
+          uri: food.image_url || require("../assets/images/icon.png"),
+        }}
         style={styles.image}
+        defaultSource={require("../assets/images/icon.png")}
       />
       <View style={styles.content}>
-        <Text style={styles.name}>{food.product_name || "No Name"}</Text>
-        <Text style={styles.info}>Brands: {food.brands || "N/A"}</Text>
-        <Text style={styles.info}>Barcode: {food.code}</Text>
-        <Text style={styles.info}>Quantity: {food.quantity || "N/A"}</Text>
-        {/* KidSafety */}
-        <KidSafety isSafe={isKidSafe} />{" "}
-        {/* This will display if the product is kid-safe */}
+        <Text style={styles.name} numberOfLines={2}>
+          {food.product_name || "Unknown Product"}
+        </Text>
+
+        <Text style={styles.info}>
+          <Text style={styles.infoLabel}>Brand: </Text>
+          {food.brands || "Unknown"}
+        </Text>
+
+        <Text style={styles.info}>
+          <Text style={styles.infoLabel}>Barcode: </Text>
+          {food.code}
+        </Text>
+
+        {food.quantity && (
+          <Text style={styles.info}>
+            <Text style={styles.infoLabel}>Quantity: </Text>
+            {food.quantity}
+          </Text>
+        )}
+
         {/* NutriScore */}
-        <NutriScore grade={food.nutrition_grades ?? "?"} />{" "}
-        {/* Default value if undefined */}
+        <NutriScore
+          grade={food.nutrition_grades || food.nutriscore_grade || "?"}
+        />
+
+        {/* KidSafety with reason */}
+        <KidSafety
+          isSafe={kidSafetyResult.isSafe}
+          reason={kidSafetyResult.reason}
+        />
       </View>
     </View>
   );
@@ -54,18 +80,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: "cover",
     marginBottom: 10,
+    backgroundColor: "#f5f5f5",
   },
   content: {
-    gap: 6,
+    gap: 8,
   },
   name: {
     fontSize: 18,
     fontWeight: "700",
     color: "#222",
+    marginBottom: 4,
   },
   info: {
     fontSize: 13,
     color: "#555",
+    marginBottom: 2,
+  },
+  infoLabel: {
+    fontWeight: "600",
+    color: "#444",
   },
 });
 

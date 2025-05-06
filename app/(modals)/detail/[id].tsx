@@ -14,6 +14,7 @@ import HealthyBar from "../../../components/HealthyBar";
 import NutriScore from "../../../components/NutriScore";
 import NutritionFacts from "../../../components/NutritionFacts";
 import KidSafety from "../../../components/KidSafety";
+import { checkKidSafety } from "../../../utils/kidSafety";
 import { Colors } from "../../../constants/Colors";
 
 const getNutritionRating = (grade: string): number => {
@@ -37,27 +38,19 @@ export default function DetailScreen() {
     }
   }, [id, fetchFoodByCode]);
 
-  const { energy, nutriGrade, ratingValue, isKidSafe, productImage } =
-    useMemo(() => {
-      if (!product) {
-        return {
-          energy: 0,
-          nutriGrade: "?",
-          ratingValue: 1,
-          isKidSafe: true,
-          productImage: null,
-        };
-      }
+ const { energy, nutriGrade, ratingValue, kidSafetyResult, productImage } =
+   useMemo(() => {
+     const safety = checkKidSafety(product);
 
-      return {
-        energy: product.nutriments?.["energy-kcal_100g"] ?? 0,
-        nutriGrade: product.nutrition_grades ?? "?",
-        ratingValue: getNutritionRating(product.nutrition_grades ?? "?"),
+     return {
+       energy: product?.nutriments?.["energy-kcal_100g"] ?? 0,
+       nutriGrade: product?.nutrition_grades ?? "?",
+       ratingValue: getNutritionRating(product?.nutrition_grades ?? "?"),
+       kidSafetyResult: safety,
+       productImage: product?.image_url || product?.image_front_url || null,
+     };
+   }, [product]);
 
-        isKidSafe: !product.ingredients_text?.toLowerCase().includes("alcohol"),
-        productImage: product.image_url || product.image_front_url || null,
-      };
-    }, [product]);
 
   if (loading) {
     return (
@@ -124,7 +117,10 @@ export default function DetailScreen() {
           <HealthyBar score={energy} />
         </View>
 
-        <KidSafety isSafe={isKidSafe} />
+        <KidSafety
+          isSafe={kidSafetyResult.isSafe}
+          reason={kidSafetyResult.reason}
+        />
 
         {product.ingredients_text && (
           <View style={styles.section}>

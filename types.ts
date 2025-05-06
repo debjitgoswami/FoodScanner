@@ -19,12 +19,22 @@ export interface Product {
   image_front_url?: string;
   image_small_url?: string;
   image_front_small_url?: string;
-
+  
   brands?: string;
   ingredients_text?: string;
-
-  nutriments?: Nutriments;
-
   nutrition_grades?: string;
   nutrition_grades_tags?: string[];
+  nutriscore_grade?: string;
+  categories_tags?: string[];
+
+  nutriments?: {
+    caffeine?: number;
+    sugars?: number;
+    [key: string]: any;
+  };
+
+  alcohol_by_volume?: number;
+
+  [key: string]: any; // For any other dynamic properties
 }
+
